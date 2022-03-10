@@ -1,4 +1,4 @@
-﻿namespace Pickpoint.RMQ.Publisher.Model
+﻿namespace Message
 {
     public class SendMessage
     {

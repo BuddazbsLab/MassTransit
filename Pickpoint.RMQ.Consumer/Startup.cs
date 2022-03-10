@@ -1,4 +1,5 @@
 ﻿using MassTransit;
+using Message;
 
 namespace Pickpoint.RMQ.Consumer
 {
@@ -16,26 +17,40 @@ namespace Pickpoint.RMQ.Consumer
 
             services.AddMassTransit(x =>
             {
-                x.AddConsumer<EventConsumer>();
+                x.AddConsumer<MessageEventConsumer>();
 
                 x.UsingRabbitMq((context, cfg) =>
                 {
                     var rabbitConfig = this.Configuration.GetSection("Rabbit");
 
-                    cfg.Host($"{rabbitConfig["HostName"]}", y =>
+                    cfg.UseJsonSerializer();
+
+                    cfg.Host($"amqp://{rabbitConfig["HostName"]}:{rabbitConfig["Port"]}", y =>
                     {
                         y.Username(rabbitConfig["UserName"]);
                         y.Password(rabbitConfig["Password"]);
+                          
                     });
 
-                    cfg.ReceiveEndpoint("event-consumer", e =>
+                    cfg.Message<SendMessage>(x =>
                     {
-                        e.ConfigureConsumer<EventConsumer>(context);                        
+                        x.SetEntityName("Consumer");
+                        
+                    });
+                    //cfg.ExchangeType = "Direct";
+                    cfg.ReceiveEndpoint("message-event", e =>
+                    {
+                        e.ConfigureConsumer<MessageEventConsumer>(context);
+                        e.Bind("Publisher", x =>
+                        {
+                            x.Durable = false;                           
+                        });
                     });
                 });
             });
 
             services.AddMassTransitHostedService();
+
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {

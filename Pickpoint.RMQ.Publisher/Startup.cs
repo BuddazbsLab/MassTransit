@@ -1,4 +1,6 @@
 ﻿using MassTransit;
+using Message;
+
 
 namespace Pickpoint.RMQ.Publisher
 {
@@ -22,11 +24,16 @@ namespace Pickpoint.RMQ.Publisher
                 {
                     var rabbitConfig = this.Configuration.GetSection("Rabbit");
 
-                    cfg.Host($"{rabbitConfig["HostName"]}", y =>
+                    cfg.Host($"amqp://{rabbitConfig["HostName"]}:{rabbitConfig["Port"]}", y =>
                     {
                         y.Username(rabbitConfig["UserName"]);
                         y.Password(rabbitConfig["Password"]);
-                    });                  
+                    });
+
+                    cfg.Message<SendMessage>(x =>
+                    {
+                        x.SetEntityName("Publisher");
+                    });
                 });
             });
             services.AddMassTransitHostedService();

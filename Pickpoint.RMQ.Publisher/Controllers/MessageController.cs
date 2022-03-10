@@ -1,6 +1,6 @@
 ﻿using MassTransit;
+using Message;
 using Microsoft.AspNetCore.Mvc;
-using Pickpoint.RMQ.Publisher.Model;
 
 namespace Pickpoint.RMQ.Publisher.Controllers
 {
@@ -9,20 +9,18 @@ namespace Pickpoint.RMQ.Publisher.Controllers
     public class MessageController : ControllerBase
 
     {
-        readonly IPublishEndpoint _publishEndpoint;
+        private readonly IPublishEndpoint publishEndpoint;
 
         public MessageController(IPublishEndpoint publishEndpoint)
         {
-            _publishEndpoint = publishEndpoint;
+            this.publishEndpoint = publishEndpoint; 
         }
 
         [HttpPost]
         public async Task<ActionResult> Post([FromBody] SendMessage message)
         {
-            await _publishEndpoint.Publish<SendMessage>(new
-            {
-                Message = message
-            });
+            await publishEndpoint.Publish(message);
+            
 
             return Ok();
         }
