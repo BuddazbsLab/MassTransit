@@ -23,5 +23,16 @@ namespace Pickpoint.RMQ.Publisher.Controllers
 
             return Ok();
         }
+
+        [RunJob("0/30 * * * * ?")]
+        public async Task EventPublishMessage()
+        {
+            await publishEndpoint.Publish(new SendMessage
+            {
+                Message = "Hello, it's work job", 
+            });
+            Console.Out.WriteLine("Send message: Hello, it's work job");
+        }
+
     }
 }
