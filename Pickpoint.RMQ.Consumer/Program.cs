@@ -3,10 +3,10 @@ using NLog;
 using NLog.Web;
 
 {
-    var logger = NLog.Web.NLogBuilder.ConfigureNLog("Nlog.config").GetCurrentClassLogger();
+    var logger = NLogBuilder.ConfigureNLog("Nlog.config").GetCurrentClassLogger();
     try
     {
-        logger.Info("Application as Started. Press Ctrl+C to shut down");
+        
         CreateHostBuilder(args).Build().Run();
 
     }
@@ -17,7 +17,7 @@ using NLog.Web;
     }
     finally
     {
-        NLog.LogManager.Shutdown();
+        LogManager.Shutdown();
     }
 
 
@@ -33,8 +33,6 @@ static IHostBuilder CreateHostBuilder(string[] args) =>
         .ConfigureLogging(logging =>
         {
             logging.ClearProviders();
-            logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
-            logging.AddConsole();
         })
         .UseNLog();
 

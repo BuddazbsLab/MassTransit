@@ -42,10 +42,7 @@ namespace Pickpoint.RMQ.Consumer
                     cfg.ReceiveEndpoint("message-event", e =>
                     {
                         e.ConfigureConsumer<MessageEventConsumer>(context);
-                        e.Bind("Publisher", x =>
-                        {
-                            x.Durable = false;                           
-                        });
+                        e.Bind("Publisher");
                     });
                 });
             });

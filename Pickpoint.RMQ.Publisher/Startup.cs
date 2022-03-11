@@ -21,7 +21,7 @@ namespace Pickpoint.RMQ.Publisher
             {
                 config.UsingRabbitMq((context, cfg) =>
                 {
-                    var rabbitConfig = this.Configuration.GetSection("Rabbit");
+                    var rabbitConfig = Configuration.GetSection("Rabbit");
 
                     cfg.Host($"amqp://{rabbitConfig["HostName"]}:{rabbitConfig["Port"]}", y =>
                     {
@@ -33,6 +33,10 @@ namespace Pickpoint.RMQ.Publisher
                     {
                         x.SetEntityName("Publisher");
                     });
+                    cfg.Publish<SendMessage>(x => 
+                    {
+                        x.Durable = false;
+                    });
                 });
             });
             services.AddMassTransitHostedService();
@@ -43,7 +47,21 @@ namespace Pickpoint.RMQ.Publisher
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-           
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseHttpsRedirection();
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 

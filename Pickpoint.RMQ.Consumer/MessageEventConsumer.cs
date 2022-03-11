@@ -14,7 +14,7 @@ namespace Pickpoint.RMQ.Consumer
 
         public async Task Consume(ConsumeContext<SendMessage> context)
         {
-            await Console.Out.WriteLineAsync(context.Message.Message);
+            
             logger.LogInformation($"Get a new message: {context.Message.Message}");
         }
     }
