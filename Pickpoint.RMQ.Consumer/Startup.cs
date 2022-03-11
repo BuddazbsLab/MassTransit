@@ -1,5 +1,7 @@
 ﻿using MassTransit;
 using Message;
+using NLog;
+using NLog.Web;
 
 namespace Pickpoint.RMQ.Consumer
 {
@@ -7,7 +9,7 @@ namespace Pickpoint.RMQ.Consumer
     {
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+            this.Configuration = configuration;
         }
 
         public IConfiguration Configuration { get; }
@@ -37,7 +39,6 @@ namespace Pickpoint.RMQ.Consumer
                         x.SetEntityName("Consumer");
                         
                     });
-                    //cfg.ExchangeType = "Direct";
                     cfg.ReceiveEndpoint("message-event", e =>
                     {
                         e.ConfigureConsumer<MessageEventConsumer>(context);
@@ -56,7 +57,6 @@ namespace Pickpoint.RMQ.Consumer
         {
 
         }
-
     }
 }
 
